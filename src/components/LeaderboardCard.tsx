@@ -1,12 +1,13 @@
 import React from 'react';
-import { LeaderboardEntry } from '../types/leaderboard';
-import { Trophy, Medal, Award } from 'lucide-react';
+import { LeaderboardEntry, LeaderboardScope } from '../types/leaderboard';
+import { Trophy, Medal, Award, School, Globe } from 'lucide-react';
 
 interface LeaderboardCardProps {
   entry: LeaderboardEntry;
+  scope: LeaderboardScope;
 }
 
-const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry }) => {
+const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry, scope }) => {
   const getRankColor = (rank: number) => {
     switch (rank) {
       case 1:
@@ -37,12 +38,6 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry }) => {
     }
   };
 
-  const getStudentAvatar = (studentId: string) => {
-    // Generate consistent avatar based on student ID
-    // const avatarId = parseInt(studentId.replace(/\D/g, '')) % 70 + 1;
-    return `https://img.lipi.games/lipi_kids/nature/morning.jpg`;
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -53,6 +48,14 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
+      {scope === 'global' && (
+        <div className="bg-purple-50 px-4 py-2 border-b border-purple-100">
+          <div className="flex items-center space-x-2 text-purple-700">
+            <Globe className="w-4 h-4" />
+            <span className="text-sm font-medium">Global Competition</span>
+          </div>
+        </div>
+      )}
       <div className={`bg-gradient-to-r ${getRankColor(entry.rank)} p-4`}>
         <div className="flex items-center justify-between text-white relative">
           <div className="flex items-center space-x-3">
@@ -71,7 +74,7 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry }) => {
             </div>
             <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white/30 shadow-lg">
               <img 
-                src={getStudentAvatar(entry.studentId)} 
+                src={entry.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.studentName)}&background=ffffff&color=000000&size=150`}
                 alt={entry.studentName}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -86,6 +89,15 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry }) => {
       
       <div className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          {scope === 'global' && entry.schoolName && (
+            <div className="sm:col-span-2">
+              <span className="text-gray-500">School:</span>
+              <div className="flex items-center space-x-2 mt-1">
+                <School className="w-4 h-4 text-blue-600" />
+                <p className="font-medium text-blue-600">{entry.schoolName}</p>
+              </div>
+            </div>
+          )}
           <div>
             <span className="text-gray-500">Group:</span>
             <p className="font-medium text-gray-900">{entry.studentGroup}</p>
@@ -94,7 +106,7 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ entry }) => {
             <span className="text-gray-500">Date:</span>
             <p className="font-medium text-gray-900">{formatDate(entry.date)}</p>
           </div>
-          <div className="sm:col-span-2">
+          <div className={scope === 'global' ? '' : 'sm:col-span-2'}>
             <span className="text-gray-500">Cumulative Total:</span>
             <p className="font-bold text-lg text-blue-600">{entry.cumulativeTotal.toLocaleString()}</p>
           </div>

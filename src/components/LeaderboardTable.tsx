@@ -1,14 +1,15 @@
 import React from 'react';
-import { LeaderboardEntry } from '../types/leaderboard';
+import { LeaderboardEntry, LeaderboardScope } from '../types/leaderboard';
 import LeaderboardCard from './LeaderboardCard';
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[];
   loading: boolean;
   error: string | null;
+  scope: LeaderboardScope;
 }
 
-const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data, loading, error }) => {
+const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data, loading, error, scope }) => {
   if (loading) {
     return (
       <div className="space-y-4">
@@ -53,7 +54,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data, loading, erro
   return (
     <div className="space-y-4">
       {data.map((entry) => (
-        <LeaderboardCard key={entry.studentId} entry={entry} />
+        <LeaderboardCard key={entry.studentId} entry={entry} scope={scope} />
       ))}
     </div>
   );
