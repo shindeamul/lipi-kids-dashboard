@@ -9,24 +9,45 @@ import {
   Settings,
   BookOpen,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
+  currentPage: 'dashboard' | 'leaderboard';
+  onPageChange: (page: 'dashboard' | 'leaderboard') => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPageChange }) => {
+  const { user, logout } = useAuth();
+
   const menuItems = [
-    { icon: Home, label: 'Dashboard', active: false, disabled: true },
+    { 
+      icon: Home, 
+      label: 'Dashboard', 
+      active: currentPage === 'dashboard', 
+      disabled: false,
+      onClick: () => onPageChange('dashboard')
+    },
     { icon: Folder, label: 'Folder', active: false, disabled: true },
-    { icon: Trophy, label: 'Leaderboard', active: true, disabled: false },
+    { 
+      icon: Trophy, 
+      label: 'Leaderboard', 
+      active: currentPage === 'leaderboard', 
+      disabled: false,
+      onClick: () => onPageChange('leaderboard')
+    },
     { icon: MessageCircle, label: 'Chat', active: false, disabled: true },
     { icon: Grid3X3, label: 'Apps', active: false, disabled: true },
     { icon: Bell, label: 'Notifications', active: false, disabled: true },
   ];
 
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <>
       {/* Mobile overlay */}
@@ -55,9 +76,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-white" />
+              {/* <BookOpen className="w-5 h-5 text-white" /> */}
+              <img src="/public/assets/logo.jpg" alt="LipiKids Logo" className="w-5 h-5" />
             </div>
             <span className="text-xl font-bold text-gray-900">LipiKids</span>
+          </div>
+          <div className="mt-3 text-sm text-gray-600">
+            <p className="font-medium">{user?.firstName} {user?.lastName}</p>
+            <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
           </div>
         </div>
 
@@ -67,6 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             {menuItems.map((item, index) => (
               <li key={index}>
                 <button
+                  onClick={item.onClick}
                   disabled={item.disabled}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
                     item.active
@@ -91,16 +118,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
 
         {/* Settings */}
         <div className="p-4 border-t border-gray-200">
-          <button
-            disabled
-            className="w-full flex items-center space-x-3 px-4 py-3 text-gray-400 cursor-not-allowed opacity-50 rounded-lg transition-colors text-left"
-          >
-            <Settings className="w-5 h-5" />
-            <span className="font-medium">Settings</span>
-            <span className="ml-auto text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-full">
-              Soon
-            </span>
-          </button>
+          <div className="space-y-2">
+            <button
+              disabled
+              className="w-full flex items-center space-x-3 px-4 py-3 text-gray-400 cursor-not-allowed opacity-50 rounded-lg transition-colors text-left"
+            >
+              <Settings className="w-5 h-5" />
+              <span className="font-medium">Settings</span>
+              <span className="ml-auto text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-full">
+                Soon
+              </span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
     </>
