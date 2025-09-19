@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-4">
-            <img src="/public/assets/logo.jpg" alt="LipiKids Logo" className="w-8 h-8" />
+            <img src="/assets/logo.jpg" alt="LipiKids Logo" className="w-8 h-8" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">LipiKids Admin</h1>
           <p className="text-gray-600">Sign in to your admin dashboard</p>
@@ -48,14 +48,14 @@ const LoginPage: React.FC = () => {
               </div>
             )}
 
-            {/* Demo Credentials */}
+            {/* Demo Credentials
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="font-medium text-blue-900 mb-2">Demo Credentials:</h3>
               <div className="text-sm text-blue-700 space-y-1">
                 <p><strong>SuperAdmin:</strong> super@admin.com / password123</p>
                 <p><strong>SchoolAdmin:</strong> admin@greenwood.edu / password123</p>
               </div>
-            </div>
+            </div> */}
 
             {/* Email Field */}
             <div>

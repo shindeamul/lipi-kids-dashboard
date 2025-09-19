@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { User, LoginCredentials, AuthState } from '../types/auth';
-import { mockAuthAPI } from '../mock/authData';
+import { authAPI } from '../services/api';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -63,11 +63,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (credentials: LoginCredentials) => {
     dispatch({ type: 'LOGIN_START' });
     try {
-      const user = await mockAuthAPI.login(credentials);
-      if (credentials.rememberMe) {
-        localStorage.setItem('user', JSON.stringify(user));
+      const response = await authAPI.login({
+        email: credentials.email,
+        password: credentials.password,
+      });
+      
+      if (response.success && response.token) {
+        // Store token in localStorage
+        localStorage.setItem('auth_token', response.token);
+        
+        // Transform API response to our User type
+        const user: User = {
+          id: response.user.id.toString(),
+          email: response.user.email,
+          username: response.user.username,
+          role: response.user.role,
+          schoolId: response.user.school_id?.toString(),
+          firstName: response.user.first_name,
+          lastName: response.user.last_name,
+          avatar: response.user.avatar_url ?? undefined,
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+        };
+        
+        if (credentials.rememberMe) {
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+        
+        dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+      } else {
+        throw new Error(response.message || 'Login failed');
       }
-      dispatch({ type: 'LOGIN_SUCCESS', payload: user });
     } catch (error) {
       dispatch({ type: 'LOGIN_ERROR', payload: (error as Error).message });
     }
@@ -75,6 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('auth_token');
     dispatch({ type: 'LOGOUT' });
   };
 
