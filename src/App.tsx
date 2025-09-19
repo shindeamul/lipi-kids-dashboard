@@ -5,11 +5,12 @@ import Sidebar from './components/Sidebar';
 import LeaderboardPage from './components/LeaderboardPage';
 import SuperAdminDashboard from './components/SuperAdminDashboard';
 import SchoolAdminDashboard from './components/SchoolAdminDashboard';
+import CategoriesManagementPage from './components/CategoriesManagementPage';
 
 const AppContent: React.FC = () => {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'leaderboard'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'leaderboard' | 'categories'>('dashboard');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -18,6 +19,10 @@ const AppContent: React.FC = () => {
   const renderMainContent = () => {
     if (currentPage === 'leaderboard') {
       return <LeaderboardPage sidebarOpen={sidebarOpen} />;
+    }
+
+    if (currentPage === 'categories') {
+      return <CategoriesManagementPage />;
     }
 
     if (user?.role === 'superadmin') {

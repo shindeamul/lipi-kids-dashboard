@@ -17,8 +17,8 @@ import { useAuth } from '../contexts/AuthContext';
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
-  currentPage: 'dashboard' | 'leaderboard';
-  onPageChange: (page: 'dashboard' | 'leaderboard') => void;
+  currentPage: 'dashboard' | 'leaderboard' | 'categories';
+  onPageChange: (page: 'dashboard' | 'leaderboard' | 'categories') => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPageChange }) => {
@@ -40,6 +40,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
       disabled: false,
       onClick: () => onPageChange('leaderboard')
     },
+    ...(user?.role === 'superadmin' ? [{
+      icon: BookOpen,
+      label: 'Categories',
+      active: currentPage === 'categories',
+      disabled: false,
+      onClick: () => onPageChange('categories')
+    }] : []),
     { icon: MessageCircle, label: 'Chat', active: false, disabled: true },
     { icon: Grid3X3, label: 'Apps', active: false, disabled: true },
     { icon: Bell, label: 'Notifications', active: false, disabled: true },
@@ -76,10 +83,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle, currentPage, onPage
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              {/* <BookOpen className="w-5 h-5 text-white" /> */}
-              <img src="/public/assets/logo.jpg" alt="LipiKids Logo" className="w-5 h-5" />
+              <BookOpen className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">LipiKids</span>
+            <span className="text-xl font-bold text-gray-900">LearnHub</span>
           </div>
           <div className="mt-3 text-sm text-gray-600">
             <p className="font-medium">{user?.firstName} {user?.lastName}</p>
